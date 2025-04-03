@@ -6,6 +6,8 @@ PowerMode currentMode = ACTIVE;
 const unsigned long inactivityTimeout = 30000; // 30 sec auto-sleep timeout
 
 void setupPowerModes() {
+    attachInterrupt(BUTTON_PIN_1, handleInterrupt1, FALLING);
+    attachInterrupt(BUTTON_PIN_2, handleInterrupt2, FALLING);
     lastActivityTime = millis(); // Use shared lastActivityTime
 }
 

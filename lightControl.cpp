@@ -1,8 +1,5 @@
 #include "lightControl.h"
 
-#define LDR_PIN 34  // LDR sensor input (Analog)
-#define LIGHT_PIN 5 // Light control (LED or Relay)
-
 int threshold = 10;   // Light threshold (adjust based on your LDR readings)
 
 void setupLight() {
