@@ -47,6 +47,13 @@ void IRAM_ATTR handleInterrupt2() {
     }
 }
 
+void configureWakeupSources() {
+    uint64_t wakeup_pins = (1ULL << BUTTON_PIN_1);
+
+    // Use ext1 wakeup for multiple buttons
+    esp_sleep_enable_ext1_wakeup(wakeup_pins, ESP_EXT1_WAKEUP_ALL_LOW);
+}
+
 PowerMode getCurrentMode() {
     return currentMode;
 }
@@ -67,8 +74,8 @@ void activeMode() {
 void parkMode() {
     Serial.println("ESP32 in PARK mode.");
     turnLightoff();
-    // Wake up from Light Sleep using only GPIO 33 (BUTTON_PIN_1)
-    esp_sleep_enable_ext0_wakeup(GPIO_NUM_33, 0); // Wake up when button is pressed (LOW)
+
+    configureWakeupSources();  // Set wakeup sources dynamically
 
     delay(2000);
     Serial.println("Entering Light Sleep...");
@@ -81,8 +88,8 @@ void parkMode() {
 void sleepMode() {
     Serial.println("ESP32 entering SLEEP mode.");
     turnLightoff();
-    // Wake up from Deep Sleep using only GPIO 33 (BUTTON_PIN_1)
-    esp_sleep_enable_ext0_wakeup(GPIO_NUM_33, 0); // Wake up when button is pressed (LOW)
+
+    configureWakeupSources();  // Set wakeup sources dynamically
 
     delay(1000);
     Serial.println("Going into Deep Sleep now...");
