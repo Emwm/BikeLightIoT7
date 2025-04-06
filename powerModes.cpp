@@ -1,13 +1,14 @@
 #include "powerModes.h"
 #include "buttonHandler.h" // Include buttonHandler.h to access lastActivityTime
 #include "lightControl.h"
+#include "GNSS.h"
 
 PowerMode currentMode = ACTIVE;
 const unsigned long inactivityTimeout = 30000; // 30 sec auto-sleep timeout
 
 void setupPowerModes() {
-    attachInterrupt(BUTTON_PIN_1, handleInterrupt1, FALLING);
-    attachInterrupt(BUTTON_PIN_2, handleInterrupt2, FALLING);
+    attachInterrupt(BUTTON_PIN_1, handleInterrupt1, RISING);
+    attachInterrupt(BUTTON_PIN_2, handleInterrupt2, RISING);
     lastActivityTime = millis(); // Use shared lastActivityTime
 }
 
@@ -20,6 +21,8 @@ void IRAM_ATTR handleInterrupt1() {
         lastActivityTime = millis(); // Reset inactivity timer
     }
     lastInterruptTime = currentTime;
+    //GNSS.update();  // GPS Update
+    Serial.println("GPS Update");
     if (currentMode == ACTIVE) {
             currentMode = PARK;
             Serial.println("Switched to PARK mode.");
@@ -38,6 +41,8 @@ void IRAM_ATTR handleInterrupt2() {
         lastActivityTime = millis(); // Reset inactivity timer
     }
     lastInterruptTime = currentTime;
+    //GNSS.update();  // GPS Update
+    Serial.println("GPS Update");
     if (currentMode == ACTIVE) {
         currentMode = SLEEP;
         Serial.println("Switched to SLEEP mode.");
@@ -48,10 +53,10 @@ void IRAM_ATTR handleInterrupt2() {
 }
 
 void configureWakeupSources() {
-    uint64_t wakeup_pins = (1ULL << BUTTON_PIN_1);
+    uint64_t wakeup_pins = (1ULL << BUTTON_PIN_1) | (1ULL << BUTTON_PIN_3);
 
     // Use ext1 wakeup for multiple buttons
-    esp_sleep_enable_ext1_wakeup(wakeup_pins, ESP_EXT1_WAKEUP_ALL_LOW);
+    esp_sleep_enable_ext1_wakeup(wakeup_pins, ESP_EXT1_WAKEUP_ANY_HIGH);
 }
 
 PowerMode getCurrentMode() {
@@ -62,6 +67,7 @@ void checkInactivity() {
     if (millis() - lastActivityTime >= inactivityTimeout) {
         Serial.println("No activity detected for 30 seconds. Entering Sleep Mode.");
         currentMode = PARK;
+        //GNSS.update();  // GPS Update
     }
 }
 

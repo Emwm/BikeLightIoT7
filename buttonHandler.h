@@ -5,6 +5,7 @@
 
 #define BUTTON_PIN_1 33
 #define BUTTON_PIN_2 18
+#define BUTTON_PIN_3 25
 
 extern volatile bool button1Pressed;
 extern volatile bool button2Pressed;

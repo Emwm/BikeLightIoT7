@@ -5,8 +5,9 @@ volatile bool button2Pressed = false;
 unsigned long lastActivityTime = 0; // Now defined only in buttonHandler.cpp
 
 void setupButtons() {
-    pinMode(BUTTON_PIN_1, INPUT_PULLUP);
-    pinMode(BUTTON_PIN_2, INPUT_PULLUP);
+    pinMode(BUTTON_PIN_1, INPUT_PULLDOWN);
+    pinMode(BUTTON_PIN_2, INPUT_PULLDOWN);
+    pinMode(BUTTON_PIN_3, INPUT_PULLDOWN);
 }
 
 void checkButtonPresses() {
