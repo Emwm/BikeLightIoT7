@@ -1,3 +1,18 @@
+/*
+These are the LoraWAN paremeters defined in the LoraWAN_Reese.cpp file
+- OTAA parameters
+- ABP parameters
+- userChannelsMask
+- loraWanRegion
+- LoraWanClass
+- appTxDutyCycle
+- overTheAirActivation
+- loraWanAdr
+- isTxConfirmed
+- appPort
+- confirmedNbTrials
+*/
+
 /* Prepares the payload which is the data to be sent. 
 Takes the LoraWAN port as a parameter (this variable is specified in the cpp file as a value of 2) */
 static void prepareTxFrame( uint8_t port );
