@@ -1,6 +1,6 @@
 #include "lightControl.h"
 
-int threshold = 10;   // Light threshold (adjust based on your LDR readings)
+int threshold = 150;   // Light threshold (adjust based on your LDR readings)
 
 void setupLight() {
     pinMode(LIGHT_PIN, OUTPUT);

@@ -5,7 +5,7 @@
 #include "esp_sleep.h"
 
 enum PowerMode { ACTIVE, PARK, SLEEP };
-
+extern volatile bool sendLocationFlag;
 void setupPowerModes();  // Initialize power modes
 void IRAM_ATTR handleInterrupt1();
 void IRAM_ATTR handleInterrupt2();

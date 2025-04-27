@@ -1,15 +1,16 @@
 #include "powerModes.h"
 #include "buttonHandler.h" // Include buttonHandler.h to access lastActivityTime
 #include "lightControl.h"
-#include "GNSS.h"
+#include "GNSSHandler.h"
 
 PowerMode currentMode = ACTIVE;
 const unsigned long inactivityTimeout = 30000; // 30 sec auto-sleep timeout
+volatile bool sendLocationFlag = false;
 
 void setupPowerModes() {
+    lastActivityTime = millis(); // Use shared lastActivityTime
     attachInterrupt(BUTTON_PIN_1, handleInterrupt1, RISING);
     attachInterrupt(BUTTON_PIN_2, handleInterrupt2, RISING);
-    lastActivityTime = millis(); // Use shared lastActivityTime
 }
 
 void IRAM_ATTR handleInterrupt1() {
@@ -22,6 +23,7 @@ void IRAM_ATTR handleInterrupt1() {
     }
     lastInterruptTime = currentTime;
     //GNSS.update();  // GPS Update
+    sendLocationFlag = true;
     Serial.println("GPS Update");
     if (currentMode == ACTIVE) {
             currentMode = PARK;
@@ -68,6 +70,7 @@ void checkInactivity() {
         Serial.println("No activity detected for 30 seconds. Entering Sleep Mode.");
         currentMode = PARK;
         //GNSS.update();  // GPS Update
+        sendLocationFlag = true;
     }
 }
 
