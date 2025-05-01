@@ -122,16 +122,16 @@ static void prepareTxFrame( uint8_t port )
 setting the lora class, region, and defualt data rate */
 void initState(){
   Mcu.begin(HELTEC_BOARD,SLOW_CLK_TPYE); //initialize lorawan board
-  Serial.println("initialized lorawan board");
+  //Serial.println("initialized lorawan board");
   if (LORAWAN_DEVEUI_AUTO) LoRaWAN.generateDeveuiByChipID(); //get the DevEUI from the chip
   LoRaWAN.init(loraWanClass,loraWanRegion); //set the region and class (we want A) in the tools tab of arduino IDE
   LoRaWAN.setDefaultDR(3); //setting default data rate
-  Serial.println("initialized lorawan settings");
+  //Serial.println("initialized lorawan settings");
 }
 
 // joins loraWAN network
 void joinState(){ 
-  Serial.println("tyring to join lorawan network");
+  //Serial.println("tyring to join lorawan network");
   LoRaWAN.join();
 }
 
@@ -142,7 +142,7 @@ The LoRaWAN.send() function sends the data. This function uses the variable isTx
 send confirmed messages ie should it wait to receive an ACK) and confirmedNbTrials (the number of times it should try to send and wait for an ACK)
 */
 void sendState(){ 
-  Serial.println("preparing and sending data");
+  //Serial.println("preparing and sending data");
   prepareTxFrame( appPort ); //calls function to prepare data packet
   LoRaWAN.send(); // sends data packet, waits to receive ACK, retries confirmedNBTrials amount of times
   cycleState(); //goes to cycle state function to delay before next data packet
@@ -154,7 +154,7 @@ the LoRaWAN.cycle() function sets the amount of time before the device will wake
 then the sleep state function is called.
 */ 
 void cycleState(){
-  Serial.println("start cycle delay");
+  //Serial.println("start cycle delay");
   txDutyCycleTime = appTxDutyCycle + randr( -APP_TX_DUTYCYCLE_RND, APP_TX_DUTYCYCLE_RND );
   LoRaWAN.cycle(txDutyCycleTime); // this sets how long the device will enter the sleep state for before it wakes up again
   sleepState(); 
@@ -162,6 +162,6 @@ void cycleState(){
 
 //puts the loraWan functionality into sleep mode (not the whole device)
 void sleepState(){
-  Serial.println("entering sleep state");
+  //Serial.println("entering sleep state");
   LoRaWAN.sleep(loraWanClass); // this puts the device in the sleep state for txDutyCycleTime
 }
