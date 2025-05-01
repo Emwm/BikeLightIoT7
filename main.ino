@@ -5,62 +5,79 @@
 #include "MotionDetector.h"
 #include "LoraWAN_Reese.h"
 
+// Define the pins for GNSS module communication
 #define GNSS_RX 16
 #define GNSS_TX 17
-#define DEVICE_ADDR 0x53
+#define DEVICE_ADDR 0x53  // Address of the motion sensor (accelerometer)
 
-GNSSHandler gnss(Serial1, GNSS_RX, GNSS_TX);
-MotionDetector detector(DEVICE_ADDR);
-GPSPosition pos;
+// Create instances of the modules for GNSS, motion detection, and GPS position
+GNSSHandler gnss(Serial1, GNSS_RX, GNSS_TX);  // Create an object for GNSS communication
+MotionDetector detector(DEVICE_ADDR);        // Create an object for the motion detector (accelerometer)
+GPSPosition pos;  // Variable to store the current GPS position
 
-
-
+// ---- Setup function: Initializes all components of the system ----
 void setup() {
-    Serial.begin(115200);
-    setupButtons();    // Initialize buttons and interrupts
-    setupPowerModes(); // Initialize power modes
-    setupLight();      // Initialize light control
-    gnss.begin();
-    detector.begin();
-    initState();
-    joinState();
+    Serial.begin(115200);       // Start serial communication at 115200 baud rate for debugging
 
+    // Initialize system components
+    setupButtons();    // Setup button pins and interrupts
+    setupPowerModes(); // Setup power modes and configure interrupts
+    setupLight();      // Setup light control and initialize related components
+    gnss.begin();      // Initialize the GNSS (GPS) module
+    detector.begin();  // Initialize the motion detector module (accelerometer)
+    initState();       // Initialize LoraWAN connection
+    joinState();       // Join the LoraWAN network (establish a connection)
+
+    // Print a ready message once all components are initialized
     Serial.println("ESP32 Ready!");
 }
 
+// ---- Main Loop function: Runs continuously to manage system state and handle events ----
 void loop() {
-    checkButtonPresses();  // Handle button events
-    checkInactivity();      // Auto turn-off after 30 sec of inactivity
+    // Call button checking to handle button presses and reset inactivity timers
+    checkButtonPresses();
+
+    // Automatically enter sleep mode after 30 seconds of inactivity
+    checkInactivity();
+
+    // Handle sending state or data (e.g., over LoraWAN or other channels)
     sendState();
 
+    // If the flag to send location is set, update location and print GPS coordinates
     if (sendLocationFlag) {
-        sendLocationFlag = false;  // Clear the flag
+        sendLocationFlag = false;  // Clear the flag once location data is being processed
 
+        // Get the current GPS position
         pos = gnss.checkLocation();
+
+        // Print the GPS coordinates (latitude and longitude) to the serial monitor for debugging
         Serial.print("Latitude: ");
         Serial.print(pos.latitude, 6);
         Serial.print(", Longitude: ");
         Serial.println(pos.longitude, 6);
 
-        // Add your sending logic here
+        // Add your sending logic here (e.g., send location via LoRa, HTTP, etc.)
     }
 
-    // Handle different power modes
+    // Handle different power modes based on the current mode (ACTIVE, PARK, SLEEP)
     switch (getCurrentMode()) {
         case ACTIVE:
-            gnss.update();
-            if(detector.isMoving() == true) // Checking if bike is moving
-            {
-              lastActivityTime = millis();
+            gnss.update();  // Update GNSS module with new GPS data
+
+            // Check if the bike is moving by detecting motion via the accelerometer
+            if(detector.isMoving() == true) {
+                lastActivityTime = millis();  // Reset the inactivity timer if movement is detected
             }
-            Serial.println("Check movement");
-            activeMode();
+            Serial.println("Check movement");  // Debugging message
+            activeMode();  // Perform actions related to active mode (e.g., light control)
             break;
+
         case PARK:
-            parkMode();
+            parkMode();  // Perform actions related to park mode (e.g., light sleep)
             break;
+
         case SLEEP:
-            sleepMode();
+            sleepMode();  // Perform actions related to sleep mode (e.g., deep sleep)
             break;
     }
 }

@@ -1,17 +1,20 @@
 #ifndef BUTTON_HANDLER_H
 #define BUTTON_HANDLER_H
 
-#include <Arduino.h>
+#include <Arduino.h> // Include Arduino core library for pinMode, digitalRead, etc.
 
-#define BUTTON_PIN_1 33
-#define BUTTON_PIN_2 18
-#define BUTTON_PIN_3 25
+// ---- GPIO Pin Definitions ----
+#define BUTTON_PIN_1 33  // GPIO for Button 1
+#define BUTTON_PIN_2 18  // GPIO for Button 2
+#define BUTTON_PIN_3 25  // GPIO for Button 3
 
-extern volatile bool button1Pressed;
-extern volatile bool button2Pressed;
-extern unsigned long lastActivityTime; // Use extern to share across files
+// ---- External Variable Declarations ----
+extern volatile bool button1Pressed;       // Flag indicating if Button 1 was pressed (set in ISR)
+extern volatile bool button2Pressed;       // Flag indicating if Button 2 was pressed (set in ISR)
+extern unsigned long lastActivityTime;     // Tracks the last time a button was pressed
 
-void setupButtons();
-void checkButtonPresses();
+// ---- Function Declarations ----
+void setupButtons();        // Set up button pins as inputs (likely with pull-up/down)
+void checkButtonPresses();  // Check and handle button press flags, update activity time
 
 #endif

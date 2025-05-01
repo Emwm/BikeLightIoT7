@@ -2,38 +2,44 @@
 #define GNSS_HANDLER_H
 
 #include <HardwareSerial.h>
-#include <TinyGPS++.h>
+#include <TinyGPS++.h>  // Library to parse GPS data
 
-// Define GPSPosition struct to hold latitude and longitude
+// ---- Struct: GPSPosition ----
+// Holds latitude and longitude of the current GPS position
 struct GPSPosition {
-    float latitude;
-    float longitude;
+    float latitude;  // Latitude in decimal degrees
+    float longitude; // Longitude in decimal degrees
 };
 
 class GNSSHandler {
 public:
-    // Constructor
+    // ---- Constructor: Initialize GNSS Handler ----
+    // Takes a HardwareSerial object and RX/TX pin numbers for GPS communication
     GNSSHandler(HardwareSerial &serial, int rxPin, int txPin);
 
-    // Begin GPS operation
+    // ---- Begin GPS operation ----
+    // Initializes serial communication with GPS module
     void begin();
 
-    // Update GPS data from serial input
+    // ---- Update GPS data ----
+    // Reads incoming GPS data from the serial interface
     void update();
 
-    // Check if there are enough satellites connected
+    // ---- Check GPS connection ----
+    // Returns true if the GPS has connected to enough satellites for a valid fix
     bool isConnected();
 
-    // Get current location (latitude and longitude)
+    // ---- Get Current GPS Location ----
+    // Returns the current location as a GPSPosition struct
     GPSPosition checkLocation();
 
 private:
-    HardwareSerial &gpsSerial; // Reference to the GPS serial interface
-    TinyGPSPlus gps;           // GPS instance
-    float lastLat, lastLng;    // Last known position
-    bool firstFix;             // Flag to indicate first GPS fix
+    HardwareSerial &gpsSerial; // Reference to the GPS serial interface (e.g., Serial1)
+    TinyGPSPlus gps;           // GPS instance to parse incoming GPS data
+    float lastLat, lastLng;    // Stores the last known latitude and longitude
+    bool firstFix;             // Flag to indicate if the first GPS fix has been achieved
 
-    // Optional: You can add any other private variables here if needed
+    // Optionally: Additional private variables can be added as needed for handling other GPS parameters or state
 };
 
 #endif
