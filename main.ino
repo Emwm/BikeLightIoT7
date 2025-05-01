@@ -4,6 +4,7 @@
 #include "GNSSHandler.h"
 #include "MotionDetector.h"
 #include "LoraWAN_Reese.h"
+#include "MAX17048.h"
 
 // Define the pins for GNSS module communication
 #define GNSS_RX 16
@@ -13,7 +14,9 @@
 // Create instances of the modules for GNSS, motion detection, and GPS position
 GNSSHandler gnss(Serial1, GNSS_RX, GNSS_TX);  // Create an object for GNSS communication
 MotionDetector detector(DEVICE_ADDR);        // Create an object for the motion detector (accelerometer)
+MAX17048 battery;
 GPSPosition pos;  // Variable to store the current GPS position
+float batterypercentage;
 
 // ---- Setup function: Initializes all components of the system ----
 void setup() {
@@ -24,6 +27,8 @@ void setup() {
     setupPowerModes(); // Setup power modes and configure interrupts
     setupLight();      // Setup light control and initialize related components
     gnss.begin();      // Initialize the GNSS (GPS) module
+    Wire.begin();  // Initialize I2C
+    battery.attatch(Wire);  // Attach MAX17048 to the I2C bus
     detector.begin();  // Initialize the motion detector module (accelerometer)
     initState();       // Initialize LoraWAN connection
     joinState();       // Join the LoraWAN network (establish a connection)
@@ -39,6 +44,9 @@ void loop() {
 
     // Automatically enter sleep mode after 30 seconds of inactivity
     checkInactivity();
+
+    // Checking the battery status
+    batterypercentage = battery.percent();
 
     // Handle sending state or data (e.g., over LoraWAN or other channels)
     sendState();
@@ -63,7 +71,7 @@ void loop() {
     switch (getCurrentMode()) {
         case ACTIVE:
             gnss.update();  // Update GNSS module with new GPS data
-
+            manageBatteryWarning(batterypercentage);
             // Check if the bike is moving by detecting motion via the accelerometer
             if(detector.isMoving() == true) {
                 lastActivityTime = millis();  // Reset the inactivity timer if movement is detected

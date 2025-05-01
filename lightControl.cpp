@@ -8,6 +8,7 @@ int threshold = 150;
 // Sets up the output pin for controlling the light (LED or relay)
 void setupLight() {
     pinMode(LIGHT_PIN, OUTPUT); // Configure light control pin as OUTPUT
+    pinMode(LED_LOW_BAT, OUTPUT);     // Low battery warning LED
 }
 
 // ---- FUNCTION: Control Light Based on LDR Sensor Reading ----
@@ -31,3 +32,16 @@ void turnLightoff() {
     digitalWrite(LIGHT_PIN, LOW); // Turn OFF the light
     Serial.println("Light OFF");  // Log action
 }
+
+// ---- FUNCTION: Manage Low Battery LED Warning ----
+// Turns ON the low battery LED if the battery percentage drops below 25%,
+// otherwise turns it OFF. This helps save energy by only activating the LED when necessary.
+void manageBatteryWarning(float batterypercentage) {
+    if (batterypercentage < 25) {
+        digitalWrite(LED_LOW_BAT, HIGH);  // Turn ON the low battery LED
+    } else {
+        digitalWrite(LED_LOW_BAT, LOW);   // Turn OFF the LED if battery is sufficient
+    }
+}
+
+

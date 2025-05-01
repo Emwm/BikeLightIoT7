@@ -7,7 +7,6 @@ MotionDetector::MotionDetector(uint8_t deviceAddress, int threshold)
 
 // Initializes the I2C communication and sets the sensor to measurement mode
 void MotionDetector::begin() {
-  Wire.begin(); // Start I2C communication
   writeTo(0x2D, 0x08);  // Set the device to measurement mode (specific to your sensor)
 }
 
