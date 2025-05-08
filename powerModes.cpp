@@ -70,7 +70,7 @@ void IRAM_ATTR handleInterrupt2() {
 void configureWakeupSources() {
     // Enable BUTTON_PIN_1 and BUTTON_PIN_3 as wakeup sources
     uint64_t wakeup_pins = (1ULL << BUTTON_PIN_1) | (1ULL << BUTTON_PIN_3);
-    esp_sleep_enable_ext1_wakeup(wakeup_pins, ESP_EXT1_WAKEUP_ANY_HIGH);
+    esp_deep_sleep_enable_gpio_wakeup(wakeup_pins, ESP_GPIO_WAKEUP_GPIO_HIGH);
 }
 
 // ---- Return Current Power Mode ----
@@ -99,12 +99,10 @@ void parkMode() {
     Serial.println("ESP32 in PARK mode.");
     turnLightoff();           // Ensure light is off
     configureWakeupSources(); // Setup wakeup GPIOs
-
     delay(2000);
     Serial.println("Entering Light Sleep...");
     delay(1000);
     esp_light_sleep_start();  // Enter light sleep
-
     Serial.println("Woke up from Light Sleep.");
 }
 
