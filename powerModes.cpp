@@ -5,7 +5,7 @@
 
 // ---- Global Variables ----
 PowerMode currentMode = ACTIVE;                   // Tracks current power state
-const unsigned long inactivityTimeout = 30000;    // Auto-sleep timeout (30 seconds)
+const unsigned long inactivityTimeout = 3000000;    // Auto-sleep timeout (30 seconds)
 volatile bool sendLocationFlag = false;           // Flag to trigger GPS location sending
 
 // ---- Initialize Power Modes and Attach Interrupts ----
@@ -99,12 +99,10 @@ void parkMode() {
     Serial.println("ESP32 in PARK mode.");
     turnLightoff();           // Ensure light is off
     configureWakeupSources(); // Setup wakeup GPIOs
-
     delay(2000);
     Serial.println("Entering Light Sleep...");
     delay(1000);
     esp_light_sleep_start();  // Enter light sleep
-
     Serial.println("Woke up from Light Sleep.");
 }
 

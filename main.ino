@@ -3,7 +3,7 @@
 #include "lightControl.h"
 #include "GNSSHandler.h"
 #include "MotionDetector.h"
-#include "LoraWAN_Reese.h"
+#include "ESP32_lora.h"
 #include "MAX17048.h"
 
 // Define the pins for GNSS module communication
@@ -18,6 +18,7 @@ MAX17048 battery;
 GPSPosition pos;  // Variable to store the current GPS position
 float batterypercentage;
 
+
 // ---- Setup function: Initializes all components of the system ----
 void setup() {
     Serial.begin(115200);       // Start serial communication at 115200 baud rate for debugging
@@ -30,8 +31,7 @@ void setup() {
     Wire.begin();  // Initialize I2C
     battery.attatch(Wire);  // Attach MAX17048 to the I2C bus
     detector.begin();  // Initialize the motion detector module (accelerometer)
-    initState();       // Initialize LoraWAN connection
-    joinState();       // Join the LoraWAN network (establish a connection)
+    init_lora();
 
     // Print a ready message once all components are initialized
     Serial.println("ESP32 Ready!");
@@ -39,6 +39,8 @@ void setup() {
 
 // ---- Main Loop function: Runs continuously to manage system state and handle events ----
 void loop() {
+
+    
     // Call button checking to handle button presses and reset inactivity timers
     checkButtonPresses();
 
@@ -47,9 +49,8 @@ void loop() {
 
     // Checking the battery status
     batterypercentage = battery.percent();
+    Serial.println(batterypercentage);
 
-    // Handle sending state or data (e.g., over LoraWAN or other channels)
-    sendState();
 
     // If the flag to send location is set, update location and print GPS coordinates
     if (sendLocationFlag) {
@@ -66,6 +67,9 @@ void loop() {
 
         // Add your sending logic here (e.g., send location via LoRa, HTTP, etc.)
     }
+
+    send_lora(1,batterypercentage,pos.longitude,pos.latitude);
+    recieve_lora();
 
     // Handle different power modes based on the current mode (ACTIVE, PARK, SLEEP)
     switch (getCurrentMode()) {
