@@ -5,7 +5,7 @@
 
 // ---- Global Variables ----
 PowerMode currentMode = ACTIVE;                   // Tracks current power state
-const unsigned long inactivityTimeout = 3000000;    // Auto-sleep timeout (30 seconds)
+const unsigned long inactivityTimeout = 30000;    // Auto-sleep timeout (30 seconds)
 volatile bool sendLocationFlag = false;           // Flag to trigger GPS location sending
 
 // ---- Initialize Power Modes and Attach Interrupts ----
@@ -23,7 +23,7 @@ void IRAM_ATTR handleInterrupt1() {
     unsigned long currentTime = millis();
 
     // Debounce: Ignore presses within 400ms
-    if (currentTime - lastInterruptTime > 400) {
+    if (currentTime - lastInterruptTime > 4000) {
         button1Pressed = true;
         lastActivityTime = millis(); // Reset inactivity timer
     }
@@ -33,11 +33,11 @@ void IRAM_ATTR handleInterrupt1() {
     Serial.println("GPS Update");
 
     // Toggle between ACTIVE and PARK modes
-    if (currentMode == ACTIVE) {
-        currentMode = PARK;
+    if (getCurrentMode() == ACTIVE) {
+        setCurrentMode(PARK);
         Serial.println("Switched to PARK mode.");
-    } else if (currentMode == PARK) {
-        currentMode = ACTIVE;
+    } else if (getCurrentMode() == PARK) {
+        setCurrentMode(ACTIVE);
         Serial.println("Switched to ACTIVE mode.");
     }
 }
@@ -48,7 +48,7 @@ void IRAM_ATTR handleInterrupt2() {
     unsigned long currentTime = millis();
 
     // Debounce: Ignore presses within 400ms
-    if (currentTime - lastInterruptTime > 400) {
+    if (currentTime - lastInterruptTime > 4000) {
         button2Pressed = true;
         lastActivityTime = millis(); // Reset inactivity timer
     }
@@ -70,12 +70,25 @@ void IRAM_ATTR handleInterrupt2() {
 void configureWakeupSources() {
     // Enable BUTTON_PIN_1 and BUTTON_PIN_3 as wakeup sources
     uint64_t wakeup_pins = (1ULL << BUTTON_PIN_1) | (1ULL << BUTTON_PIN_3);
-    esp_deep_sleep_enable_gpio_wakeup(wakeup_pins, ESP_GPIO_WAKEUP_GPIO_HIGH);
+    esp_sleep_enable_ext1_wakeup(wakeup_pins, ESP_EXT1_WAKEUP_ANY_HIGH);
+    esp_sleep_enable_timer_wakeup(30 * 1000000ULL); // Wake after 30 seconds
 }
 
 // ---- Return Current Power Mode ----
 PowerMode getCurrentMode() {
     return currentMode;
+}
+
+// ---- Set Current Power Mode ----
+void setCurrentMode(int powermode) {
+    if (powermode == 0) {
+    currentMode = ACTIVE;
+} else if (powermode == 1) {
+    currentMode = PARK;
+} else if (powermode == 2) {
+    currentMode = SLEEP;
+}
+
 }
 
 // ---- Monitor Inactivity and Trigger Auto-Sleep ----

@@ -24,6 +24,7 @@ void setup() {
     Serial.begin(115200);       // Start serial communication at 115200 baud rate for debugging
 
     // Initialize system components
+    init_lora();
     setupButtons();    // Setup button pins and interrupts
     setupPowerModes(); // Setup power modes and configure interrupts
     setupLight();      // Setup light control and initialize related components
@@ -31,7 +32,7 @@ void setup() {
     Wire.begin();  // Initialize I2C
     battery.attatch(Wire);  // Attach MAX17048 to the I2C bus
     detector.begin();  // Initialize the motion detector module (accelerometer)
-    init_lora();
+    
 
     // Print a ready message once all components are initialized
     Serial.println("ESP32 Ready!");
@@ -68,12 +69,13 @@ void loop() {
         // Add your sending logic here (e.g., send location via LoRa, HTTP, etc.)
     }
 
-    send_lora(1,batterypercentage,pos.longitude,pos.latitude);
-    recieve_lora();
+    
 
     // Handle different power modes based on the current mode (ACTIVE, PARK, SLEEP)
     switch (getCurrentMode()) {
         case ACTIVE:
+            send_lora(getCurrentMode(),batterypercentage,pos.longitude,pos.latitude);
+            recieve_lora();
             gnss.update();  // Update GNSS module with new GPS data
             manageBatteryWarning(batterypercentage);
             // Check if the bike is moving by detecting motion via the accelerometer
@@ -85,6 +87,8 @@ void loop() {
             break;
 
         case PARK:
+            send_lora(getCurrentMode(),batterypercentage,pos.longitude,pos.latitude);
+            recieve_lora();
             parkMode();  // Perform actions related to park mode (e.g., light sleep)
             break;
 

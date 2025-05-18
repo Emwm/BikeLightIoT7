@@ -2,7 +2,7 @@
 #define GNSS_HANDLER_H
 
 #include <HardwareSerial.h>
-#include <HT_TinyGPS++.h>  // Library to parse GPS data
+#include <TinyGPS++.h>  // Library to parse GPS data
 
 // ---- Struct: GPSPosition ----
 // Holds latitude and longitude of the current GPS position

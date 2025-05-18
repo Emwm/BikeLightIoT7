@@ -99,7 +99,7 @@ void init_lora(){
 
 void send_lora( int devMode, float batteryLevel, float longCoord, float latCoord ){  
   Serial.println("TXing");
-  myLora.tx("Hello there"); //one byte, blocking function, uncomfirmed
+  //myLora.tx("Hello there"); //one byte, blocking function, uncomfirmed
   // ^ the function sends the data byte-by-byte internally, blocking (waiting) until each byte is fully sent before sending the next.
 
   // Build a comma-separated string

@@ -30,6 +30,9 @@ void checkInactivity();
 // Returns the current power mode (ACTIVE, PARK, or SLEEP)
 PowerMode getCurrentMode();
 
+// Sets current power mode (ACTIVE, PARK, or SLEEP)
+void setCurrentMode(int powermode);
+
 // Behavior while in ACTIVE mode (e.g., running light logic)
 void activeMode();
 

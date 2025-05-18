@@ -5,7 +5,7 @@
 
 // ---- GPIO Pin Definitions ----
 #define BUTTON_PIN_1 33  // GPIO for Button 1
-#define BUTTON_PIN_2 18  // GPIO for Button 2
+#define BUTTON_PIN_2 13  // GPIO for Button 2
 #define BUTTON_PIN_3 25  // GPIO for Button 3
 
 // ---- External Variable Declarations ----
