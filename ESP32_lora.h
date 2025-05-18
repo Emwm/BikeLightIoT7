@@ -4,4 +4,4 @@
 void initialize_radio(); //called within init_lora
 void init_lora(); //initializes loraWAN and connects to TTN
 void send_lora( int devMode, float batteryLevel, float longCoord, float latCoord ); //sends data with TTN
-void recieve_lora(); //checks for downlink and prints it to serial
+int recieve_lora(); //checks for downlink, checks if downlink is new, returns int value
