@@ -74,8 +74,6 @@ void loop() {
     // Handle different power modes based on the current mode (ACTIVE, PARK, SLEEP)
     switch (getCurrentMode()) {
         case ACTIVE:
-            send_lora(getCurrentMode(),batterypercentage,pos.longitude,pos.latitude);
-            recieve_lora();
             gnss.update();  // Update GNSS module with new GPS data
             manageBatteryWarning(batterypercentage);
             // Check if the bike is moving by detecting motion via the accelerometer
@@ -84,15 +82,20 @@ void loop() {
             }
             Serial.println("Check movement");  // Debugging message
             activeMode();  // Perform actions related to active mode (e.g., light control)
+            send_lora(getCurrentMode(),batterypercentage,pos.longitude,pos.latitude);
+            setCurrentMode(recieve_lora());
             break;
 
         case PARK:
-            send_lora(getCurrentMode(),batterypercentage,pos.longitude,pos.latitude);
-            recieve_lora();
+            lastActivityTime = millis();  // Reset the inactivity timer if movement is detected
             parkMode();  // Perform actions related to park mode (e.g., light sleep)
+            send_lora(getCurrentMode(),batterypercentage,pos.longitude,pos.latitude);
+            setCurrentMode(recieve_lora());
             break;
 
         case SLEEP:
+            send_lora(getCurrentMode(),batterypercentage,pos.longitude,pos.latitude);
+            setCurrentMode(recieve_lora());
             sleepMode();  // Perform actions related to sleep mode (e.g., deep sleep)
             break;
     }

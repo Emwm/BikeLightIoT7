@@ -5,7 +5,7 @@
 
 // ---- Global Variables ----
 PowerMode currentMode = ACTIVE;                   // Tracks current power state
-const unsigned long inactivityTimeout = 30000;    // Auto-sleep timeout (30 seconds)
+const unsigned long inactivityTimeout = 60000;    // Auto-sleep timeout (30 seconds)
 volatile bool sendLocationFlag = false;           // Flag to trigger GPS location sending
 
 // ---- Initialize Power Modes and Attach Interrupts ----
@@ -71,7 +71,7 @@ void configureWakeupSources() {
     // Enable BUTTON_PIN_1 and BUTTON_PIN_3 as wakeup sources
     uint64_t wakeup_pins = (1ULL << BUTTON_PIN_1) | (1ULL << BUTTON_PIN_3);
     esp_sleep_enable_ext1_wakeup(wakeup_pins, ESP_EXT1_WAKEUP_ANY_HIGH);
-    esp_sleep_enable_timer_wakeup(30 * 1000000ULL); // Wake after 30 seconds
+    esp_sleep_enable_timer_wakeup(5 * 1000000ULL); // Wake after 30 seconds
 }
 
 // ---- Return Current Power Mode ----
@@ -80,15 +80,14 @@ PowerMode getCurrentMode() {
 }
 
 // ---- Set Current Power Mode ----
-void setCurrentMode(int powermode) {
-    if (powermode == 0) {
-    currentMode = ACTIVE;
-} else if (powermode == 1) {
-    currentMode = PARK;
-} else if (powermode == 2) {
-    currentMode = SLEEP;
-}
-
+void setCurrentMode(int powermode) { 
+    if (powermode == 11){
+        currentMode = ACTIVE;
+    } else if (powermode == 22) {
+        currentMode = PARK;
+    } else if (powermode == 33) {
+        currentMode = SLEEP;
+    }
 }
 
 // ---- Monitor Inactivity and Trigger Auto-Sleep ----

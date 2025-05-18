@@ -14,13 +14,6 @@
  * The appropriate line is "myLora.initABP(XXX);" or "myLora.initOTAA(XXX);"
  * When using ABP, it is advised to enable "relax frame count".
  *
- * Connect the RN2xx3 as follows:
- * RN2xx3 -- ESP8266
- * Uart TX -- GPIO4
- * Uart RX -- GPIO5
- * Reset -- GPIO15
- * Vcc -- 3.3V
- * Gnd -- Gnd
  *
  */
 #include <rn2xx3.h>
@@ -35,6 +28,52 @@ HardwareSerial loraSerial(1); //initiailizing the hardware UART for our lora com
 //create an instance of the rn2xx3 library, giving the software UART as stream to use, and using LoRa WAN
 rn2xx3 myLora(loraSerial);
 
+String prevStr = ""; // holds value of the previous downlink
+
+// Helper: Converts a hex character to its integer value
+int hex_char_to_int(char c) {
+    if ('0' <= c && c <= '9') return c - '0';
+    if ('a' <= c && c <= 'f') return c - 'a' + 10;
+    if ('A' <= c && c <= 'F') return c - 'A' + 10;
+    return -1;
+}
+//hex code
+// Converts a hex string to ASCII
+void hex_to_ascii(const char* hex, char* ascii) {
+    while (*hex && hex[1]) {
+        int hi = hex_char_to_int(*hex++);
+        int lo = hex_char_to_int(*hex++);
+        if (hi == -1 || lo == -1) break;
+        *ascii++ = (hi << 4) | lo;
+    }
+    *ascii = '\0';
+}
+
+// Parses the ASCII string and extracts the value for "value"
+int get_c_value_from_ascii(const char* ascii) {
+    const char* key = "\"value\":";
+    const char* pos = strstr(ascii, key);
+    if (pos) {
+        int value;
+        if (sscanf(pos + strlen(key), " %d", &value) == 1) {
+            return value;
+        }
+    }
+    return -1; // Error code
+}
+
+// Main function: receives hex string, returns the C value
+int get_c_value_from_hex(const char* hex) {
+    // Buffer for decoded ASCII (hex string length / 2 + 1)
+    size_t len = strlen(hex) / 2 + 1;
+    char* ascii = (char*)malloc(len);
+    if (!ascii) return -1;
+    hex_to_ascii(hex, ascii);
+    int value = get_c_value_from_ascii(ascii);
+    free(ascii);
+    return value;
+}
+//hex code
 
 void initialize_radio()
 {
@@ -75,7 +114,7 @@ void initialize_radio()
   // OTAA: initOTAA(AppEUI, AppKey);
   join_result = myLora.initOTAA("70B3D57ED0070B8E", "FBA8024835EEE54FB9C1F11060FF9BAB");
 
-  while(!join_result)
+  while(!join_result) //need to fix this so it does not get stuck
   {
     Serial.println("Unable to join. Are your keys correct, and do you have TTN coverage?");
     delay(60000); //delay a minute before retry
@@ -92,14 +131,11 @@ void init_lora(){
   
   // initialize lorawan communication
   initialize_radio();
-
-  //transmit a startup message
-  myLora.tx("TTN Mapper on ESP32 node");
 }
 
 void send_lora( int devMode, float batteryLevel, float longCoord, float latCoord ){  
   Serial.println("TXing");
-  //myLora.tx("Hello there"); //one byte, blocking function, uncomfirmed
+  // myLora.tx("Hello there"); //one byte, blocking function, uncomfirmed
   // ^ the function sends the data byte-by-byte internally, blocking (waiting) until each byte is fully sent before sending the next.
 
   // Build a comma-separated string
@@ -140,7 +176,20 @@ void send_lora( int devMode, float batteryLevel, float longCoord, float latCoord
   // Serial.println("Response: " + response);
 }
 
-void recieve_lora(){
+int recieve_lora(){
   String str = myLora.getRx(); // checks if there is a recieved downlink message waiting in RN modules buffer
-  Serial.println("Recieved: " + str);
+  //Serial.println("Received str: " + str);
+  //Serial.println("Previous str: " + prevStr);
+  if (str.length() != 0 ){
+    if (str != prevStr){ // not the same
+      //Serial.println("New string Received: " + str);
+      int mode = get_c_value_from_hex(str.c_str());
+      Serial.println("Value integer:" + String(mode));
+      prevStr = str;
+      return mode;
+    }
+  } else {
+    prevStr = "";
+    return 0; // theres no recieved message
+  }
 }
