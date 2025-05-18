@@ -4,11 +4,15 @@
 // Below this value (from LDR), the light will turn ON
 int threshold = 150;
 
+//MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, DATA_PIN, CLK_PIN, CS_PIN, MAX_DEVICES);
+
 // ---- FUNCTION: Initialize Light Pin ----
 // Sets up the output pin for controlling the light (LED or relay)
 void setupLight() {
-    pinMode(LIGHT_PIN, OUTPUT); // Configure light control pin as OUTPUT
     pinMode(LED_LOW_BAT, OUTPUT);     // Low battery warning LED
+    //mx.begin();
+    //mx.control(MD_MAX72XX::INTENSITY, 5);  // Set brightness (0-15)
+    //mx.clear();
 }
 
 // ---- FUNCTION: Control Light Based on LDR Sensor Reading ----
@@ -18,10 +22,14 @@ void controlLight() {
     Serial.printf("Light Level: %d\n", lightLevel); // Debug print of LDR value
 
     if (lightLevel < threshold) {
-        digitalWrite(LIGHT_PIN, HIGH);     // Turn light ON
+        for (int row = 0; row < 8; row++) {
+        //mx.setRow(0, row, B11111111);  // Turning LEDs on
+    }
         Serial.println("Light ON");        // Log action
     } else {
-        digitalWrite(LIGHT_PIN, LOW);      // Turn light OFF
+        for (int row = 0; row < 8; row++) {
+        //mx.setRow(0, row, B00000000);  // Turning LEDs on
+    }
         Serial.println("Light OFF");       // Log action
     }
 }
@@ -29,7 +37,9 @@ void controlLight() {
 // ---- FUNCTION: Force Light OFF ----
 // Ensures the light is turned off regardless of LDR input
 void turnLightoff() {
-    digitalWrite(LIGHT_PIN, LOW); // Turn OFF the light
+    for (int row = 0; row < 8; row++) {
+        //mx.setRow(0, row, B00000000);  // Turning LEDs on
+    }
     Serial.println("Light OFF");  // Log action
 }
 

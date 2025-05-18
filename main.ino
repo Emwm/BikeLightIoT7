@@ -74,7 +74,7 @@ void loop() {
     // Handle different power modes based on the current mode (ACTIVE, PARK, SLEEP)
     switch (getCurrentMode()) {
         case ACTIVE:
-            gnss.update();  // Update GNSS module with new GPS data
+            //gnss.update();  // Update GNSS module with new GPS data
             manageBatteryWarning(batterypercentage);
             // Check if the bike is moving by detecting motion via the accelerometer
             if(detector.isMoving() == true) {

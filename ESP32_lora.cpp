@@ -112,7 +112,7 @@ void initialize_radio()
 
   // We are using over the air
   // OTAA: initOTAA(AppEUI, AppKey);
-  join_result = myLora.initOTAA("70B3D57ED0070B8E", "FBA8024835EEE54FB9C1F11060FF9BAB");
+  join_result = myLora.initOTAA("70B3D57ED0070C35", "840F5A2B838953A66D49D02B7A6BD1D4");
 
   while(!join_result) //need to fix this so it does not get stuck
   {

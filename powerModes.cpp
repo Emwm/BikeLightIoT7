@@ -34,10 +34,10 @@ void IRAM_ATTR handleInterrupt1() {
 
     // Toggle between ACTIVE and PARK modes
     if (getCurrentMode() == ACTIVE) {
-        setCurrentMode(PARK);
+        setCurrentMode(22);
         Serial.println("Switched to PARK mode.");
     } else if (getCurrentMode() == PARK) {
-        setCurrentMode(ACTIVE);
+        setCurrentMode(11);
         Serial.println("Switched to ACTIVE mode.");
     }
 }

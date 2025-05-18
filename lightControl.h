@@ -2,10 +2,22 @@
 #define LIGHT_CONTROL_H
 
 #include <Arduino.h>
+#include <MD_MAX72xx.h>
+#include <SPI.h>
+
+// Define the type of module you're using (most common is FC16)
+#define HARDWARE_TYPE MD_MAX72XX::FC16_HW
+
+// Number of MAX7219 devices in series (number of 8x8 matrices)
+#define MAX_DEVICES 1
+
+// ESP32 SPI pin connections
+#define DATA_PIN 14  // DIN
+#define CLK_PIN  13  // CLK
+#define CS_PIN   12  // CS (sometimes labeled as LOAD)
 
 // ---- Pin Definitions ----
 #define LDR_PIN 34   // LDR sensor input pin (Analog)
-#define LIGHT_PIN 5  // Output pin to control light (e.g., LED or relay)
 #define LED_LOW_BAT 2 // Showing battery percentage under 25%
 
 // ---- Function Declarations ----
