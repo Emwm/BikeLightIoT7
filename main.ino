@@ -25,9 +25,9 @@ void setup() {
 
     // Initialize system components
     init_lora();
+    setupLight();      // Setup light control and initialize related components
     setupButtons();    // Setup button pins and interrupts
     setupPowerModes(); // Setup power modes and configure interrupts
-    setupLight();      // Setup light control and initialize related components
     gnss.begin();      // Initialize the GNSS (GPS) module
     Wire.begin();  // Initialize I2C
     battery.attatch(Wire);  // Attach MAX17048 to the I2C bus
@@ -74,7 +74,7 @@ void loop() {
     // Handle different power modes based on the current mode (ACTIVE, PARK, SLEEP)
     switch (getCurrentMode()) {
         case ACTIVE:
-            //gnss.update();  // Update GNSS module with new GPS data
+            gnss.update();  // Update GNSS module with new GPS data
             manageBatteryWarning(batterypercentage);
             // Check if the bike is moving by detecting motion via the accelerometer
             if(detector.isMoving() == true) {
