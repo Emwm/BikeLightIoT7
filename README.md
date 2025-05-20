@@ -291,5 +291,5 @@ switch (getCurrentMode()) {
 
 ## Authors
 
-Group 7 in the DTU course 34346 Networking technologies and application development for Io
+Group 7 in the DTU course 34346 Networking technologies and application development for IoT
 
