@@ -289,20 +289,7 @@ switch (getCurrentMode()) {
 | buttonHandler  | Detects button presses                 |
 | lightControl   | Manages LED or light control           |
 
----
+## Authors
 
-## 🤝 Contributing
+Group 7 in the DTU course 34346 Networking technologies and application development for Io
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
-
-1. Fork the repository  
-2. Create your feature branch (`git checkout -b feature/fooBar`)  
-3. Commit your changes (`git commit -am 'Add some fooBar'`)  
-4. Push to the branch (`git push origin feature/fooBar`)  
-5. Create a new Pull Request  
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
