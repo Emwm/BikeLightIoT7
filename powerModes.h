@@ -18,9 +18,6 @@ void setupPowerModes();
 // Interrupt Service Routine for button 1 (used to toggle modes and GPS update)
 void IRAM_ATTR handleInterrupt1();
 
-// Interrupt Service Routine for button 2 (used to enter sleep and toggle modes)
-void IRAM_ATTR handleInterrupt2();
-
 // Configures GPIO pins as wakeup sources for light or deep sleep
 void configureWakeupSources();
 
