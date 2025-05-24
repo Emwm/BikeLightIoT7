@@ -46,10 +46,6 @@ An ESP32-based smart tracking and monitoring system for bicycles, combining GNSS
   - Wire  
   - SPI  
 
-### 🔌 Wiring Diagram
-
-(Add your wiring diagram here or list pin configurations)
-
 ### 🚀 Flashing the Firmware
 
 ```bash
