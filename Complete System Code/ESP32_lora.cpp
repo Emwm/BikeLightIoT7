@@ -28,7 +28,7 @@ HardwareSerial loraSerial(1); //initiailizing the hardware UART for our lora com
 //create an instance of the rn2xx3 library, giving the software UART as stream to use, and using LoRa WAN
 rn2xx3 myLora(loraSerial);
 
-String prevStr = "";
+String prevStr = ""; // holds value of the previous downlink
 
 // Helper: Converts a hex character to its integer value
 int hex_char_to_int(char c) {
@@ -112,7 +112,7 @@ void initialize_radio()
 
   // We are using over the air
   // OTAA: initOTAA(AppEUI, AppKey);
-  join_result = myLora.initOTAA("70B3D57ED0070B8E", "FBA8024835EEE54FB9C1F11060FF9BAB");
+  join_result = myLora.initOTAA("70B3D57ED0070C35", "840F5A2B838953A66D49D02B7A6BD1D4");
 
   while(!join_result) //need to fix this so it does not get stuck
   {
@@ -178,11 +178,11 @@ void send_lora( int devMode, float batteryLevel, float longCoord, float latCoord
 
 int recieve_lora(){
   String str = myLora.getRx(); // checks if there is a recieved downlink message waiting in RN modules buffer
-  Serial.println("Received str: " + str);
-  Serial.println("Previous str: " + prevStr);
+  //Serial.println("Received str: " + str);
+  //Serial.println("Previous str: " + prevStr);
   if (str.length() != 0 ){
     if (str != prevStr){ // not the same
-      Serial.println("New string Received: " + str);
+      //Serial.println("New string Received: " + str);
       int mode = get_c_value_from_hex(str.c_str());
       Serial.println("Value integer:" + String(mode));
       prevStr = str;
