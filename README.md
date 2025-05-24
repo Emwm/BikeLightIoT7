@@ -112,7 +112,7 @@ System behavior varies by mode:
 
 ## 🛰 GNSS (GPS) Handler
 
-Handles GPS data using the TinyGPS++ library.
+Handles GPS data using the TinyGPS++ library. Sends the location everytime the mode of the system changes.
 
 ### 📋 API
 
@@ -124,6 +124,8 @@ Handles GPS data using the TinyGPS++ library.
 | `checkLocation()`   | Returns `GPSPosition` with lat/lon         |
 
 ### 📍 Example
+
+This flag is used to update the location and send it.
 
 ```cpp
 if (sendLocationFlag) {
@@ -260,7 +262,7 @@ Transitions:
 ```cpp
 switch (getCurrentMode()) {
     case ACTIVE:
-        // GNSS + motion + LoRa
+        // Motion + LoRa
         break;
     case PARK:
         // Light sleep
