@@ -58,10 +58,13 @@ PowerMode getCurrentMode() {
 void setCurrentMode(int powermode) { 
     if (powermode == 11){
         currentMode = ACTIVE;
+        sendLocationFlag = true;               // Flag for GPS update
     } else if (powermode == 22) {
         currentMode = PARK;
+        sendLocationFlag = true;               // Flag for GPS update
     } else if (powermode == 33) {
         currentMode = SLEEP;
+        sendLocationFlag = true;               // Flag for GPS update
     }
 }
 
