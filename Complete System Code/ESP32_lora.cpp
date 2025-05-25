@@ -1,6 +1,7 @@
 /*
  Includes example code from the rn2xx3.h library. 
  The example code comes from the "ArduinoUnoNano-basic.ino" and "ArduinoUnoNano-downlink.ino" files.
+ Also includes code from chatgpt to help with the downlink payload parsing. 
  */
 
 #include <rn2xx3.h>
