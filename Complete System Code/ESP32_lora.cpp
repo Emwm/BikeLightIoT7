@@ -1,28 +1,17 @@
 /*
- * Author: JP Meijers
- * Date: 2016-10-20
- *
- * Transmit a one byte packet via TTN. This happens as fast as possible, while still keeping to
- * the 1% duty cycle rules enforced by the RN2483's built in LoRaWAN stack. Even though this is
- * allowed by the radio regulations of the 868MHz band, the fair use policy of TTN may prohibit this.
- *
- * CHECK THE RULES BEFORE USING THIS PROGRAM!
- *
- * CHANGE ADDRESS!
- * Change the device address, network (session) key, and app (session) key to the values
- * that are registered via the TTN dashboard.
- * The appropriate line is "myLora.initABP(XXX);" or "myLora.initOTAA(XXX);"
- * When using ABP, it is advised to enable "relax frame count".
- *
- *
+ Includes example code from the rn2xx3.h library. 
+ The example code comes from the "ArduinoUnoNano-basic.ino" and "ArduinoUnoNano-downlink.ino" files.
  */
+
 #include <rn2xx3.h>
 #include <HardwareSerial.h>
 
+// ---- Define UART Pins ----
 #define RXD2 18
 #define TXD2 19
 #define RESET 23
 
+// ---- Global Variables ----
 HardwareSerial loraSerial(1); //initiailizing the hardware UART for our lora communication
 
 //create an instance of the rn2xx3 library, giving the software UART as stream to use, and using LoRa WAN
@@ -30,14 +19,15 @@ rn2xx3 myLora(loraSerial);
 
 String prevStr = ""; // holds value of the previous downlink
 
-// Helper: Converts a hex character to its integer value
+// ---- Downlink Parsing Functions ----
+// Converts a hex character to its integer value
 int hex_char_to_int(char c) {
     if ('0' <= c && c <= '9') return c - '0';
     if ('a' <= c && c <= 'f') return c - 'a' + 10;
     if ('A' <= c && c <= 'F') return c - 'A' + 10;
     return -1;
 }
-//hex code
+
 // Converts a hex string to ASCII
 void hex_to_ascii(const char* hex, char* ascii) {
     while (*hex && hex[1]) {
@@ -62,7 +52,7 @@ int get_c_value_from_ascii(const char* ascii) {
     return -1; // Error code
 }
 
-// Main function: receives hex string, returns the C value
+// receives hex string, returns the C value
 int get_c_value_from_hex(const char* hex) {
     // Buffer for decoded ASCII (hex string length / 2 + 1)
     size_t len = strlen(hex) / 2 + 1;
@@ -73,8 +63,9 @@ int get_c_value_from_hex(const char* hex) {
     free(ascii);
     return value;
 }
-//hex code
 
+// ---- Function: Initializes Network Connection ----
+// this function is called within the init_lora() function during setup of the main code
 void initialize_radio()
 {
   //reset RN2xx3
@@ -123,6 +114,7 @@ void initialize_radio()
   Serial.println("Successfully joined TTN");
 }
 
+// ---- Function: Initializes LoRaWAN ----
 void init_lora(){
   // initialize lora serial
   loraSerial.begin(57600, SERIAL_8N1, RXD2, TXD2);
@@ -133,6 +125,7 @@ void init_lora(){
   initialize_radio();
 }
 
+// ---- Function: Sends Uplink ----
 void send_lora( int devMode, float batteryLevel, float longCoord, float latCoord ){  
   Serial.println("TXing");
   // myLora.tx("Hello there"); //one byte, blocking function, uncomfirmed
@@ -147,7 +140,7 @@ void send_lora( int devMode, float batteryLevel, float longCoord, float latCoord
 
   myLora.tx(payload); //one byte, blocking function
 
-  // below is for sending raw data
+  // below is for sending raw data, ran out of time to fully implement
 
   // // create payload buffer (1 + 4 + 4 + 4 = 13 bytes)
   // uint8_t payload[13];
@@ -176,6 +169,7 @@ void send_lora( int devMode, float batteryLevel, float longCoord, float latCoord
   // Serial.println("Response: " + response);
 }
 
+// ---- Function: Recieves Downlink ----
 int recieve_lora(){
   String str = myLora.getRx(); // checks if there is a recieved downlink message waiting in RN modules buffer
   //Serial.println("Received str: " + str);
