@@ -289,6 +289,6 @@ switch (getCurrentMode()) {
 
 ## Authors
 
-Code contribution of Group 7 in the DTU course 34346 Networking technologies and application development for IoT
-Felix Hell, s243376 (Readme)
+Group 7 in the DTU course 34346 Networking technologies and application development for IoT
+
 
